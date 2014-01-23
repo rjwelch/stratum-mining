@@ -110,7 +110,7 @@ class DB_Mysql():
         # Check for found shares to archive
         self.execute(
             """
-            SELECT `time`
+            SELECT UNIX_TIMESTAMP(`time`)
             FROM `shares` 
             WHERE `upstream_result` = 1
             ORDER BY `time` 
