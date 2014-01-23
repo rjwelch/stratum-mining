@@ -37,6 +37,6 @@ For more info on Stratum:
 http://mining.bitcoin.cz/stratum-mining.
 
 Original version by Slush
-Modified version by GeneralFault
+Modified version by Wade Womersley (Media Skunk Works)
 
-This version by Wade Womersley (Media Skunk Works) ( Tips Welcome: 1FxBTbWR15WZp8vnru8N6zVsVBwigPAcdN )
+This version by rjwelch
