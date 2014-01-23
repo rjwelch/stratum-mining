@@ -896,46 +896,16 @@ class DB_Mysql():
         
         self.execute(
             """
-            CREATE TABLE IF NOT EXISTS `shares_archive`
-            (
-                `id` SERIAL PRIMARY KEY,
-                `time` TIMESTAMP,
-                `rem_host` TEXT,
-                `username` TEXT,
-                `our_result` BOOLEAN,
-                `upstream_result` BOOLEAN,
-                `reason` TEXT,
-                `solution` TEXT,
-                `block_num` INTEGER,
-                `prev_block_hash` TEXT,
-                `useragent` TEXT,
-                `difficulty` INTEGER
-            )
-            ENGINE = MYISAM
+            CREATE TABLE IF NOT EXISTS `shares_archive` LIKE `shares`
             """
         )
-        
+
         self.execute(
             """
-            CREATE TABLE IF NOT EXISTS `shares_archive_found`
-            (
-                `id` SERIAL PRIMARY KEY,
-                `time` TIMESTAMP,
-                `rem_host` TEXT,
-                `username` TEXT,
-                `our_result` BOOLEAN,
-                `upstream_result` BOOLEAN,
-                `reason` TEXT,
-                `solution` TEXT,
-                `block_num` INTEGER,
-                `prev_block_hash` TEXT,
-                `useragent` TEXT,
-                `difficulty` INTEGER
-            )
-            ENGINE = MYISAM
+            CREATE TABLE IF NOT EXISTS `shares_archive_found` LIKE `shares`
             """
         )
-        
+
         self.execute(
             """
             UPDATE `pool`
@@ -975,6 +945,44 @@ class DB_Mysql():
             """
         )
         
+        # Adjusting indicies on table: shares_archive
+        self.execute(
+            """
+            DROP INDEX `shares_username` ON `shares_archive`
+            """
+        )
+
+        self.execute(
+            """
+            CREATE INDEX `shares_time_username` ON `shares_archive`(`time`, `username`(10))
+            """
+        )
+
+        self.execute(
+            """
+            CREATE INDEX `shares_upstreamresult` ON `shares_archive`(`upstream_result`)
+            """
+        )
+
+        # Adjusting indicies on table: shares_archive_found
+        self.execute(
+            """
+            DROP INDEX `shares_username` ON `shares_archive_found`
+            """
+        )
+
+        self.execute(
+            """
+            CREATE INDEX `shares_time_username` ON `shares_archive_found`(`time`, `username`(10))
+            """
+        )
+
+        self.execute(
+            """
+            CREATE INDEX `shares_upstreamresult` ON `shares_archive_found`(`upstream_result`)
+            """
+        )
+
         self.execute(
             """
             UPDATE `pool`
@@ -1037,6 +1045,8 @@ class DB_Mysql():
             ALTER TABLE `shares`
             ADD COLUMN `worker` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 AFTER `username`,
             DROP INDEX `id`,
+            CHARACTER SET = utf8,
+            COLLATE = utf8_general_ci,
             ENGINE = InnoDB;
             """
         )
@@ -1050,6 +1060,46 @@ class DB_Mysql():
             """
         )
         
+        self.execute(
+            """
+            ALTER TABLE `shares_archive`
+            ADD COLUMN `worker` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 AFTER `username`,
+            DROP INDEX `id`,
+            CHARACTER SET = utf8,
+            COLLATE = utf8_general_ci,
+            ENGINE = InnoDB;
+            """
+        )
+
+        self.execute(
+            """
+            UPDATE `shares_archive`
+            JOIN `pool_worker`
+              ON `pool_worker`.`username` = `shares_archive`.`username`
+            SET `worker` = `pool_worker`.`id`
+            """
+        )
+
+        self.execute(
+            """
+            ALTER TABLE `shares_archive_found`
+            ADD COLUMN `worker` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 AFTER `username`,
+            DROP INDEX `id`,
+            CHARACTER SET = utf8,
+            COLLATE = utf8_general_ci,
+            ENGINE = InnoDB;
+            """
+        )
+
+        self.execute(
+            """
+            UPDATE `shares_archive_found`
+            JOIN `pool_worker`
+              ON `pool_worker`.`username` = `shares_archive_found`.`username`
+            SET `worker` = `pool_worker`.`id`
+            """
+        )
+
         self.execute(
             """
             SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO';
@@ -1086,6 +1136,36 @@ class DB_Mysql():
             """
         )
         
+        self.execute(
+            """
+            ALTER TABLE `shares_archive`
+              ADD CONSTRAINT `workerid_a`
+              FOREIGN KEY (`worker` )
+              REFERENCES `pool_worker` (`id`)
+              ON DELETE NO ACTION
+              ON UPDATE NO ACTION,
+            DROP INDEX `shares_time_username`,
+            ADD INDEX `shares_time_worker` (`time` ASC, `worker` ASC),
+            ADD INDEX `shares_worker` (`worker` ASC),
+            DROP COLUMN `username`
+            """
+        )
+
+        self.execute(
+            """
+            ALTER TABLE `shares_archive_found`
+              ADD CONSTRAINT `workerid_af`
+              FOREIGN KEY (`worker` )  
+              REFERENCES `pool_worker` (`id`)
+              ON DELETE NO ACTION
+              ON UPDATE NO ACTION,
+            DROP INDEX `shares_time_username`,
+            ADD INDEX `shares_time_worker` (`time` ASC, `worker` ASC),
+            ADD INDEX `shares_worker` (`worker` ASC),
+            DROP COLUMN `username`
+            """
+        )
+
         self.execute(
             """
             UPDATE `pool` 
