@@ -17,6 +17,12 @@ Step 1: Install the stratum core
 	sudo easy_install stratum
 	  (or if using alternate python: sudo /usr/local/bin/easy_install stratum)
 	
+	I have experienced problems with easy_install as found in the debian 
+	python-setuptools package, so I've found it works best to 
+	do the following install manually (from https://bitbucket.org/pypa/setuptools):  
+	(with superuser privileges)
+	wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py -O - | python
+
 	For Debian Wheezy (possibly others), after install, modify the following file:  
 	/usr/local/lib/python2.7/dist-packages/stratum-0.2.13-py2.7.egg/stratum/websocket_transport.py
 	and change the following line from: 
