@@ -1,6 +1,15 @@
 Installation Instructions
 =========================
 
+Dependencies: 
+	(for Debian Wheezy, other installations may differ)
+	git
+	gcc
+	python-dev
+	mysql-server
+	mysql-client
+	libmysqlclient-dev	
+
 Step 0: Install bitcoind
 	It MUST be a recent version of bitcoind that support getblocktemplate
 	Set it up and start it!
@@ -10,7 +19,8 @@ Step 1: Install the stratum core
 	git pull https://github.com/slush0/stratum.git
 	sudo easy_install stratum
 	  (or if using alternate python: sudo /usr/local/bin/easy_install stratum)
-	for Debian Wheezy (possibly others), after install, modify the following file:  
+	
+	For Debian Wheezy (possibly others), after install, modify the following file:  
 	/usr/local/lib/python2.7/dist-packages/stratum-0.2.13-py2.7.egg/stratum/websocket_transport.py
 	and change the following line from: 
 	from autobahn.websocket import WebSocketServerProtocol, WebSocketServerFactory
@@ -19,6 +29,10 @@ Step 1: Install the stratum core
 
 Step 2: Pull a copy of the miner
 	git pull https://github.com/rjwelch/stratum-mining.git
+	
+	Other dependencies: 
+	sudo easy_install simplejson
+	sudo easy_install pycrypto
 
 Step 3: Configure the Miner
 	cp conf/config_sample.py conf/config.py
@@ -31,12 +45,16 @@ Step 4: Run the pool
 	OR - using alternate python
 	/usr/local/bin/twistd -ny launcher.tac -l -
 
+	Note: If you encounter an error with regard to MsgPackSerializer due to an autobahn bug 
+	(https://github.com/tavendo/AutobahnPython/issues/188), a workaround would be to 
+	install the following: 
+	sudo easy_install msgpack-python
+
 You can now set the URL on your stratum proxy (or miner that supports stratum) to:
 http://YOURHOSTNAME:3333
 
 Bitcoind blocknotify Setup
 =========================
-Although scary (for me), this is actually pretty easy.
 
 Step 1: Set Admin Password
 	Ensure that you have set the ADMIN_PASSWORD_SHA256 parameter in conf/config.py
@@ -103,4 +121,3 @@ Is your firewall off?
 Is bitcoind running?
 
 TODO: are there other problems?
-
