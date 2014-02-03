@@ -10,6 +10,12 @@ Step 1: Install the stratum core
 	git pull https://github.com/slush0/stratum.git
 	sudo easy_install stratum
 	  (or if using alternate python: sudo /usr/local/bin/easy_install stratum)
+	for Debian Wheezy (possibly others), after install, modify the following file:  
+	/usr/local/lib/python2.7/dist-packages/stratum-0.2.13-py2.7.egg/stratum/websocket_transport.py
+	and change the following line from: 
+	from autobahn.websocket import WebSocketServerProtocol, WebSocketServerFactory
+	to: 
+	from autobahn.twisted.websocket import WebSocketServerProtocol, WebSocketServerFactory
 
 Step 2: Pull a copy of the miner
 	git pull https://github.com/rjwelch/stratum-mining.git
@@ -84,9 +90,9 @@ Mysql:
 1: Set up your parameters in the config file.
 2: Install the postgresql libraries in your os:
 	Redhat and the like:
-		yum install mysql mysql-devel
+		yum install mysql-server mysql mysql-devel
 	Ubuntu and the like:
-		apt-get install mysql mysql-devel
+		apt-get install mysql-server mysql-client libmysqlclient-dev
 3: Install the python bindings
 	easy_install mysql-python
 
