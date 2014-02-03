@@ -6,9 +6,6 @@ Dependencies:
 	git
 	gcc
 	python-dev
-	mysql-server
-	mysql-client
-	libmysqlclient-dev	
 
 Step 0: Install bitcoind
 	It MUST be a recent version of bitcoind that support getblocktemplate
