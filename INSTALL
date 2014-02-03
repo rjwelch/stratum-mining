@@ -6,7 +6,7 @@ Dependencies:
 	git
 	gcc
 	python-dev
-	python-setuptools (may not work, see below)
+	python-setuptools (may not work, see Step 1 below)
 
 Step 0: Install bitcoind
 	It MUST be a recent version of bitcoind that support getblocktemplate
